@@ -4,9 +4,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Use environment variables so GitHub Actions secrets work automatically
 const supabase = createClient(
-  'https://lrzfzeitcjhygmyzvkqy.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyemZ6ZWl0Y2poeWdteXp2a3F5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDMxOTUsImV4cCI6MjEwMzg3OTE5NX0.qo33ZN5UpJeN6PC0P5VPVp5eqOqZZQuXXsFnoiDmrnY'
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
 );
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -55,9 +56,8 @@ async function runOutreachPipeline() {
         Keep it concise, professional, and end with a soft call-to-action for a quick chat.
       `;
 
-      // Updated model reference as suggested by the API response
       const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
       });
 
