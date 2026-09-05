@@ -4,11 +4,20 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Use environment variables so GitHub Actions secrets work automatically
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
+// Debug log to verify if GitHub Actions secrets are being injected into process.env
+console.log("Runtime Environment Check:");
+console.log("- SUPABASE_URL length:", process.env.SUPABASE_URL ? process.env.SUPABASE_URL.length : "UNDEFINED");
+console.log("- SUPABASE_KEY present:", !!process.env.SUPABASE_KEY);
+console.log("- GEMINI_API_KEY present:", !!process.env.GEMINI_API_KEY);
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error("Critical: SUPABASE_URL or SUPABASE_KEY is missing from the environment.");
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -74,6 +83,7 @@ async function runOutreachPipeline() {
     }
   } catch (err) {
     console.error("Error running outreach pipeline:", err);
+    process.exit(1);
   }
 }
 
