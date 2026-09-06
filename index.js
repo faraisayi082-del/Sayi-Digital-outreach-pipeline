@@ -68,6 +68,7 @@ async function runOutreachPipeline() {
         Keep it concise, professional, and end with a soft call-to-action for a quick chat.
       `;
 
+      // Explicitly utilizing the current 3.8 flash model identifier
       const response = await ai.models.generateContent({
         model: 'gemini-3.8-flash',
         contents: prompt,
