@@ -4,14 +4,17 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Debug log to verify if GitHub Actions secrets are being injected into process.env
-console.log("Runtime Environment Check:");
-console.log("- SUPABASE_URL length:", process.env.SUPABASE_URL ? process.env.SUPABASE_URL.length : "UNDEFINED");
-console.log("- SUPABASE_KEY present:", !!process.env.SUPABASE_KEY);
-console.log("- GEMINI_API_KEY present:", !!process.env.GEMINI_API_KEY);
+// Sanitize and trim whitespace, newlines, or accidental quotes from environment variables
+const rawUrl = process.env.SUPABASE_URL || '';
+const supabaseUrl = rawUrl.replace(/^["']|["']$/g, '').trim();
+const supabaseKey = (process.env.SUPABASE_KEY || '').replace(/^["']|["']$/g, '').trim();
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+// Debug log to verify sanitized lengths
+console.log("Runtime Environment Check:");
+console.log("- SUPABASE_URL length:", supabaseUrl.length);
+console.log("- SUPABASE_URL value preview:", supabaseUrl ? `${supabaseUrl.substring(0, 12)}...` : "UNDEFINED");
+console.log("- SUPABASE_KEY present:", !!supabaseKey);
+console.log("- GEMINI_API_KEY present:", !!process.env.GEMINI_API_KEY);
 
 if (!supabaseUrl || !supabaseKey) {
   throw new Error("Critical: SUPABASE_URL or SUPABASE_KEY is missing from the environment.");
